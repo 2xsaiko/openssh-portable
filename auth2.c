@@ -58,6 +58,7 @@
 #endif
 #include "monitor_wrap.h"
 #include "digest.h"
+#include "usermap.h"
 
 /* import */
 extern ServerOptions options;
@@ -263,17 +264,18 @@ input_userauth_request(int type, u_int32_t seq, struct ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	Authmethod *m = NULL;
-	char *user = NULL, *service = NULL, *method = NULL, *style = NULL;
+	char *user = NULL, *origuser = NULL, *service = NULL, *method = NULL, *style = NULL;
 	int r, authenticated = 0;
 	double tstart = monotime_double();
 
 	if (authctxt == NULL)
 		fatal("input_userauth_request: no authctxt");
 
-	if ((r = sshpkt_get_cstring(ssh, &user, NULL)) != 0 ||
+	if ((r = sshpkt_get_cstring(ssh, &origuser, NULL)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &service, NULL)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &method, NULL)) != 0)
 		goto out;
+	user = xstrdup(usermap_remap(origuser));
 	debug("userauth-request for user %s service %s method %s", user, service, method);
 	debug("attempt %d failures %d", authctxt->attempt, authctxt->failures);
 
@@ -284,6 +286,7 @@ input_userauth_request(int type, u_int32_t seq, struct ssh *ssh)
 		/* setup auth context */
 		authctxt->pw = PRIVSEP(getpwnamallow(ssh, user));
 		authctxt->user = xstrdup(user);
+		authctxt->origuser = xstrdup(origuser);
 		if (authctxt->pw && strcmp(service, "ssh-connection")==0) {
 			authctxt->valid = 1;
 			debug2_f("setting up authctxt for %s", user);
@@ -343,6 +346,7 @@ input_userauth_request(int type, u_int32_t seq, struct ssh *ssh)
  out:
 	free(service);
 	free(user);
+	free(origuser);
 	free(method);
 	return r;
 }

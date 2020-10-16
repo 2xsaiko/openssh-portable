@@ -59,7 +59,8 @@ struct Authctxt {
 	int		 failures;
 	int		 server_caused_failure;
 	int		 force_pwchange;
-	char		*user;		/* username sent by the client */
+	char		*user;		/* username to log in with */
+	char		*origuser;		/* username sent by the client */
 	char		*service;
 	struct passwd	*pw;		/* set if 'valid' */
 	char		*style;

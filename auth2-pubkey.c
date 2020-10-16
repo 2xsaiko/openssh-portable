@@ -187,7 +187,7 @@ userauth_pubkey(struct ssh *ssh)
 			goto done;
 		}
 		/* reconstruct packet */
-		xasprintf(&userstyle, "%s%s%s", authctxt->user,
+		xasprintf(&userstyle, "%s%s%s", authctxt->origuser,
 		    authctxt->style ? ":" : "",
 		    authctxt->style ? authctxt->style : "");
 		if ((r = sshbuf_put_u8(b, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||

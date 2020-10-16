@@ -128,7 +128,7 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o \
 	sftp-server.o sftp-common.o \
 	sandbox-null.o sandbox-rlimit.o sandbox-systrace.o sandbox-darwin.o \
 	sandbox-seccomp-filter.o sandbox-capsicum.o sandbox-pledge.o \
-	sandbox-solaris.o uidswap.o $(SKOBJS)
+	sandbox-solaris.o uidswap.o usermap.o $(SKOBJS)
 
 SCP_OBJS=	scp.o progressmeter.o
 

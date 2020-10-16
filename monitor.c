@@ -96,6 +96,7 @@
 #include "match.h"
 #include "ssherr.h"
 #include "sk-api.h"
+#include "usermap.h"
 
 #ifdef GSSAPI
 static Gssctxt *gsscontext = NULL;
@@ -1290,9 +1291,9 @@ monitor_valid_userblob(const u_char *data, u_int datalen)
 	xasprintf(&userstyle, "%s%s%s", authctxt->user,
 	    authctxt->style ? ":" : "",
 	    authctxt->style ? authctxt->style : "");
-	if (strcmp(userstyle, cp) != 0) {
+	if (strcmp(userstyle, usermap_remap(cp)) != 0) {
 		logit("wrong user name passed to monitor: "
-		    "expected %s != %.100s", userstyle, cp);
+		    "expected %s != %.100s", userstyle, usermap_remap(cp));
 		fail++;
 	}
 	free(userstyle);
@@ -1346,9 +1347,9 @@ monitor_valid_hostbasedblob(const u_char *data, u_int datalen,
 	xasprintf(&userstyle, "%s%s%s", authctxt->user,
 	    authctxt->style ? ":" : "",
 	    authctxt->style ? authctxt->style : "");
-	if (strcmp(userstyle, cp) != 0) {
+	if (strcmp(userstyle, usermap_remap(cp)) != 0) {
 		logit("wrong user name passed to monitor: "
-		    "expected %s != %.100s", userstyle, cp);
+		    "expected %s != %.100s", userstyle, usermap_remap(cp));
 		fail++;
 	}
 	free(userstyle);
